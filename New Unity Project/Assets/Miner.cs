@@ -24,7 +24,11 @@ public class Miner : MonoBehaviour
     {
         if(m_targetBuilding == null)
         {
-            Destroy(this.gameObject);
+            m_targetBuilding = BuildingManager.GetBuildingForMiner(transform);
+            if(m_targetBuilding == null)
+            {
+                return;
+            }
         }
 
         m_rigidbody.AddForce((m_targetBuilding.transform.position - transform.position).normalized * m_minerForce * Time.deltaTime);
@@ -41,12 +45,7 @@ public class Miner : MonoBehaviour
             return;
         }
 
-        if(collidedBuilding != m_targetBuilding)
-        {
-            return;
-        }
-
-        collidedBuilding.ActiveProduce();
+        collidedBuilding.QuadrupleProduce();
         Destroy(this.gameObject);
 
     }

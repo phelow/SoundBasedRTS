@@ -20,9 +20,10 @@ public class Defender : MonoBehaviour {
     private IEnumerator Seek()
     {
         GameObject target = null;
-        while (true)
+        float t = 5.0f;
+        while (t > 0.0f)
         {
-
+            t -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
             if (target == null)
             {
@@ -32,6 +33,7 @@ public class Defender : MonoBehaviour {
 
             m_rigidbody.AddForce((target.transform.position - transform.position).normalized * Time.deltaTime * m_enemyForce);
         }
+        Destroy(this.gameObject);
     }
 
     public GameObject FindTarget()

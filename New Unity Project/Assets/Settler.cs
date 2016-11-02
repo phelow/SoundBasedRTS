@@ -12,7 +12,7 @@ public class Settler : MonoBehaviour {
     private float m_maxSpawnTime = 10.0f;
 	// Use this for initialization
 	void Start () {
-        m_rigidbody.AddForce(new Vector2(Random.Range(-2, 2), Random.Range(-2, 2)).normalized * m_forceMultiplier);
+        m_rigidbody.AddForce(new Vector2(Random.Range(-2, 2), Random.Range(-2, 2)).normalized * m_forceMultiplier * Random.Range(.1f,.5f));
         StartCoroutine(DropABuilding());
 	}
 
@@ -20,7 +20,14 @@ public class Settler : MonoBehaviour {
     {
         yield return new WaitForSeconds(Random.Range(m_minSpawnTime, m_maxSpawnTime));
 
-        BuildingManager.SpawnBuildingAt(this.transform);
+        Vector3 viewportPoint = Camera.main.WorldToViewportPoint(transform.position);
+
+        if (viewportPoint.x < 1.0f && viewportPoint.x > 0.0f && viewportPoint.y > 0.0f && viewportPoint.y < 1.0f)
+        {
+            BuildingManager.SpawnBuildingAt(this.transform);
+
+        }
+
         Destroy(this.gameObject);
     }
 	

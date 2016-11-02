@@ -9,12 +9,10 @@ public class BuildingManager : MonoBehaviour
     private List<Building> m_buildings;
     [SerializeField]
     private Building m_activeBuilding;
-    [SerializeField]
-    private Rigidbody2D m_cameraRigidbody;
 
     [SerializeField]
     private GameObject[] m_buildingsToSpawn;
-
+    
     [SerializeField]
     private float m_maxDensity = 3.0f;
     private float m_minerRange = 5.0f;
@@ -24,14 +22,36 @@ public class BuildingManager : MonoBehaviour
     {
         ms_instance = this;
 
+        StartCoroutine(TickProduction());
+    }
+
+    public IEnumerator TickProduction()
+    {
+
+        while (true)
+        {
+            yield return new WaitForSeconds(2.0f);
+            List<Building> toRemove = new List<Building>();
+
+            foreach (Building building in m_buildings)
+            {
+                if (building.PassiveProduce())
+                {
+                    toRemove.Add(building);
+                }
+            }
+
+            foreach(Building building in toRemove)
+            {
+                RemoveBuilding(building);
+            }
+        }
     }
 
     public static void RemoveBuilding(Building building)
     {
         ms_instance.m_buildings.Remove(building);
         Destroy(building.gameObject);
-
-        //TODO: highscore stuff
     }
 
     public static Building GetBuildingForMiner(Transform minerTransform)
@@ -49,6 +69,11 @@ public class BuildingManager : MonoBehaviour
             {
                 buildingsInRange.Add(building);
             }
+        }
+
+        if(buildingsInRange.Count == 0)
+        {
+            return null;
         }
 
         return buildingsInRange[Random.Range(0, buildingsInRange.Count)];
@@ -89,20 +114,14 @@ public class BuildingManager : MonoBehaviour
                     m_activeBuilding = building;
                 }
             }
-        }
 
-        foreach (Building building in m_buildings)
-        {
-            building.PassiveProduce();
-        }
+            if (m_activeBuilding == null)
+            {
+                return;
+            }
+            m_activeBuilding.ActiveProduce();
 
-        if (m_activeBuilding == null)
-        {
-            return;
         }
-        m_activeBuilding.ActiveProduce();
-        m_cameraRigidbody.AddForce((m_activeBuilding.transform.position - m_cameraRigidbody.transform.position).normalized * Vector2.Distance(m_activeBuilding.transform.position, m_cameraRigidbody.transform.position));
-
 
     }
 }

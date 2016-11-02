@@ -14,6 +14,9 @@ public class Building : MonoBehaviour {
     [SerializeField]
     private GameObject m_spawnObject;
 
+    private bool m_triggered = false;
+    private bool m_quadTriggered = false;
+
     private float m_timeToSpawn = 1.0f;
 
     // Use this for initialization
@@ -26,41 +29,54 @@ public class Building : MonoBehaviour {
 
     }
 
-    protected void Produce()
+    protected bool Produce()
     {
-        if(m_timeToSpawn > 0.0f)
+        if(m_quadTriggered)
         {
-            m_timeToSpawn -= Time.deltaTime;
-            return;
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+            }
         }
 
-        m_timeToSpawn = m_spawnTime;
+        if (m_triggered)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+
+            }
+            return true;
+        }
         GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+        return false;
     }
 
     protected void SetPassiveImage()
     {
-        m_image.color = Color.Lerp(m_image.color, m_originalColor, Time.deltaTime);
+        m_image.color = Color.Lerp(m_image.color, m_originalColor, .5f);
     }
 
     protected void SetActiveImage()
     {
-        m_image.color = Color.Lerp(m_image.color, m_selectedColor, Time.deltaTime);
+        m_image.color = Color.Lerp(m_image.color, m_selectedColor, .5f);
     }
+
 
     public virtual void ActiveProduce()
     {
-        SetActiveImage();
-        Produce();
-        Produce();
-        Produce();
-        Produce();
-        Produce();
+        m_image.color = Color.Lerp(m_image.color, m_selectedColor, .8f);
+        m_triggered = true;
     }
 
-    public virtual void PassiveProduce()
+    public virtual void QuadrupleProduce()
+    {
+        m_quadTriggered = true;
+    }
+
+    public virtual bool PassiveProduce()
     {
         SetPassiveImage();
-        Produce();
+        return Produce();
     }
 }
