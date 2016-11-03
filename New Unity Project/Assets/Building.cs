@@ -19,14 +19,31 @@ public class Building : MonoBehaviour {
 
     private float m_timeToSpawn = 1.0f;
 
-    // Use this for initialization
-    protected void Start () {
-        m_originalColor = m_image.color;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    private float m_yield = 1.0f;
 
+    // Use this for initialization
+    protected void Start() {
+        m_originalColor = m_image.color;
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
+
+    public void ResetYield()
+    {
+        SetYield(Random.Range(.1f, 3.0f));
+    }
+
+    public void SetYield(float yield)
+    {
+        m_yield = yield;
+    }
+
+    public float GetYield()
+    {
+        return m_yield;
     }
 
     protected bool Produce()
@@ -41,10 +58,9 @@ public class Building : MonoBehaviour {
 
         if (m_triggered)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10 * m_yield; i++)
             {
-                GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
-
+                (GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null) as GameObject).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-2,2), Random.Range(-2, 2)).normalized * m_yield);
             }
             return true;
         }

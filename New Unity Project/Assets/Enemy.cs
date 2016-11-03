@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
                 continue;
             }
 
-            if (Vector3.Distance(go.transform.position, transform.position) < Vector3.Distance(go.transform.position, transform.position))
+            if (Vector3.Distance(go.transform.position, transform.position) < Vector3.Distance(closestUnit.transform.position, transform.position))
             {
                 closestUnit = go;
             }

@@ -8,6 +8,9 @@ public class SpawnEnemies : MonoBehaviour {
     private GameObject m_enemy;
 
     [SerializeField]
+    private Hv_TriTone_LibWrapper wrapper;
+
+    [SerializeField]
     private Image m_image;
 
 	// Use this for initialization
@@ -19,16 +22,28 @@ public class SpawnEnemies : MonoBehaviour {
     {
         float nightCycle = 10.0f;
         float spawnRate = 1.0f;
+        float spawnMultiplier = 1.0f;
         while (true)
         {
             m_image.color = Color.Lerp(Color.grey, Color.clear, .5f);
-            yield return new WaitForSeconds(nightCycle);
+            BuildingManager.CalmDown();
+
+            float t = nightCycle;
+            while(t > 0.0f)
+            {
+                t -= Time.deltaTime;
+                wrapper.octaveLength = Mathf.Lerp(20, 5, t);
+                yield return new WaitForEndOfFrame();
+            }
+
+
+            BuildingManager.DropBass();
             m_image.color = Color.Lerp(Color.red, Color.clear, .5f);
             spawnRate *= .99f;
-            nightCycle += 5.0f;
 
+            spawnMultiplier *= 1.1f;
 
-            float spawnTime = nightCycle / 2;
+            float spawnTime = nightCycle * spawnMultiplier / 2;
 
             while(spawnTime > 0)
             {
