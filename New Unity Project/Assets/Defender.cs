@@ -14,7 +14,6 @@ public class Defender : MonoBehaviour {
     {
         //pick the nearest player unit
         StartCoroutine(Seek());
-
     }
 
     private IEnumerator Seek()

@@ -52,6 +52,11 @@ public class Enemy : MonoBehaviour
             }
         }
 
+        if(playerUnits.Length == 0)
+        {
+            BuildingManager.CheckForEndGame();
+        }
+
         return closestUnit;
     }
 
@@ -74,6 +79,7 @@ public class Enemy : MonoBehaviour
 
         Destroy(coll.gameObject);
         Destroy(this.gameObject);
+
 
     }
 }

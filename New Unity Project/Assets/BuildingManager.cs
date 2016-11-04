@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -12,10 +13,17 @@ public class BuildingManager : MonoBehaviour
 
     [SerializeField]
     private GameObject[] m_buildingsToSpawn;
+
+    [SerializeField]
+    private Text m_scoreText;
     
     [SerializeField]
     private float m_maxDensity = 3.0f;
     private float m_minerRange = 5.0f;
+    private float m_closeProximity = .5f;
+
+    private int m_yourScore = 0;
+
 
     [SerializeField]
     private Hv_TriTone_LibWrapper wrapper;
@@ -36,6 +44,14 @@ public class BuildingManager : MonoBehaviour
         }
 
         StartCoroutine(TickProduction());
+    }
+
+    public static void CheckForEndGame()
+    {
+        if(ms_instance.m_buildings.Count == 0)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        }
     }
 
     public IEnumerator TickProduction()
@@ -95,9 +111,25 @@ public class BuildingManager : MonoBehaviour
     public static void SpawnBuildingAt(Transform location)
     {
         float density = 0.0f;
+        int numTownCenters = 0;
+        int numArmories = 0;
+        int numMines = 0;
+
         foreach (Building building in ms_instance.m_buildings)
         {
-            density += 1 / (1 + Vector2.Distance(location.position, building.transform.position));
+            if(building is Mine)
+            {
+                numMines++;
+            }
+            else if (building is Armory)
+            {
+                numArmories++;
+            }else if(building is TownCenter)
+            {
+                numTownCenters++;
+            }
+
+            density += 1 / (1 + Mathf.Pow(Vector2.Distance(location.position, building.transform.position),2));
         }
 
         if (density > ms_instance.m_maxDensity)
@@ -105,7 +137,31 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
-        ms_instance.m_buildings.Add((GameObject.Instantiate(ms_instance.m_buildingsToSpawn[Random.Range(0, ms_instance.m_buildingsToSpawn.Length)], location.position, location.rotation, null) as GameObject).GetComponent<Building>());
+        ms_instance.m_scoreText.text = "HighScore: " + PlayerPrefs.GetInt("HighScore", 0) + "\nYour Score: " + ms_instance.m_yourScore;
+        ms_instance.m_yourScore++;
+
+        if (ms_instance.m_yourScore > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayerPrefs.SetInt("HighScore", ms_instance.m_yourScore);
+        }
+        int choice = 0;
+
+        int randomTC = Random.Range(0, numTownCenters);
+
+        int randomM = Random.Range(0, numMines);
+        int randomA = Random.Range(0, numArmories);
+
+        if(randomTC <= randomM && randomTC <= randomA)
+        {
+            choice = 0;
+        }
+        else
+        {
+            choice = Random.Range(0, ms_instance.m_buildingsToSpawn.Length);
+        }
+
+
+        ms_instance.m_buildings.Add((GameObject.Instantiate(ms_instance.m_buildingsToSpawn[choice], location.position, location.rotation, null) as GameObject).GetComponent<Building>());
     }
 
     public static void DropBass()
@@ -127,7 +183,7 @@ public class BuildingManager : MonoBehaviour
         foreach (Building building in m_buildings)
         {
 
-            if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < 1.0f)
+            if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < m_closeProximity)
             {
                 closeBuildings.Add(building);
             }
@@ -163,7 +219,7 @@ public class BuildingManager : MonoBehaviour
             foreach (Building building in m_buildings)
             {
 
-                if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < 1.0f)
+                if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < m_closeProximity)
                 {
                     closeBuildings.Add(building);
                 }
@@ -186,8 +242,8 @@ public class BuildingManager : MonoBehaviour
         Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         //calculate the yield
-        float totalMetro = Mathf.Lerp(2000, 200, Mathf.InverseLerp(.5f, 20.0f, totalYield));
-        m_audioSource.volume = Mathf.Lerp(.1f, 1.0f, Mathf.InverseLerp(.5f, 20.0f, totalYield));
+        float totalMetro = 500;
+        m_audioSource.volume = Mathf.Lerp(.1f, 1.0f, Mathf.InverseLerp(.5f, 15.0f, totalYield));
 
         if (ms_isHectic)
         {
@@ -200,6 +256,8 @@ public class BuildingManager : MonoBehaviour
             wrapper.metroVal2 = totalMetro / 2;
             wrapper.metroVal3 = totalMetro / 4;
         }
+
+        wrapper.octaveLength = Mathf.Lerp(1, 50, Mathf.InverseLerp(.5f, 15.0f, totalYield));
 
     }
 }

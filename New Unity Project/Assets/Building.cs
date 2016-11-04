@@ -50,7 +50,7 @@ public class Building : MonoBehaviour {
     {
         if(m_quadTriggered)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 5; i++)
             {
                 GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
             }
@@ -87,6 +87,13 @@ public class Building : MonoBehaviour {
 
     public virtual void QuadrupleProduce()
     {
+        if (m_triggered)
+        {
+            return;
+        }
+
+        m_image.color = Color.Lerp(m_image.color, m_selectedColor, .6f);
+        
         m_quadTriggered = true;
     }
 

@@ -23,6 +23,8 @@ public class SpawnEnemies : MonoBehaviour {
         float nightCycle = 10.0f;
         float spawnRate = 1.0f;
         float spawnMultiplier = 1.0f;
+
+        int numToSpawn = 1;
         while (true)
         {
             m_image.color = Color.Lerp(Color.grey, Color.clear, .5f);
@@ -42,6 +44,7 @@ public class SpawnEnemies : MonoBehaviour {
             spawnRate *= .99f;
 
             spawnMultiplier *= 1.1f;
+            numToSpawn++;
 
             float spawnTime = nightCycle * spawnMultiplier / 2;
 
@@ -49,7 +52,9 @@ public class SpawnEnemies : MonoBehaviour {
             {
                 spawnTime -= spawnRate;
 
-                GameObject.Instantiate(m_enemy, transform.position, transform.rotation, null);
+                for (int i = 0; i < numToSpawn; i++) {
+                    GameObject.Instantiate(m_enemy, transform.position, transform.rotation, null);
+                }
 
                 yield return new WaitForSeconds(spawnRate);
             }

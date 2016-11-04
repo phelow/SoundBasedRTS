@@ -38,7 +38,7 @@ public class Miner : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        Building collidedBuilding = coll.gameObject.GetComponent<Building>();
+        Building collidedBuilding = coll.gameObject.GetComponentInChildren<Building>();
 
         if(collidedBuilding == null || collidedBuilding is Mine)
         {
