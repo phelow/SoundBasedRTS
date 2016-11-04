@@ -22,7 +22,7 @@ public class Settler : MonoBehaviour {
 
         Vector3 viewportPoint = Camera.main.WorldToViewportPoint(transform.position);
 
-        if (viewportPoint.x < 1.0f && viewportPoint.x > 0.0f && viewportPoint.y > 0.0f && viewportPoint.y < 1.0f)
+        if (viewportPoint.x < 1.0f && viewportPoint.x > 0.0f && viewportPoint.y > 0.0f && viewportPoint.y < 1.0f && Random.Range(0,10) < 2)
         {
             BuildingManager.SpawnBuildingAt(this.transform);
 

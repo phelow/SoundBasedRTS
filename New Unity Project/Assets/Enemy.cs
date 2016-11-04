@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class Enemy : MonoBehaviour
 {
@@ -9,53 +11,48 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float m_enemyForce = 1.0f;
 
+    private float m_health;
+
     // Use this for initialization
     void Start()
     {
         //pick the nearest player unit
-        StartCoroutine(Seek());
+        GameObject target = null;
+
+        target = FindTarget();
+        if(target == null)
+        {
+            return;
+        }
+
+        m_rigidbody.AddForce((target.transform.position - transform.position).normalized * m_enemyForce);
+
 
     }
 
-    private IEnumerator Seek()
+    public void SetHealth(int h)
     {
-        GameObject target = null;
-        while (true)
-        {
-            if (target == null)
-            {
-                target = FindTarget();
-            }
-
-            m_rigidbody.AddForce((target.transform.position - transform.position).normalized * Time.deltaTime * m_enemyForce);
-
-            yield return new WaitForEndOfFrame();
-        }
+        m_health = h;
     }
 
     public GameObject FindTarget()
     {
-        GameObject[] playerUnits = GameObject.FindGameObjectsWithTag("Player");
+        List<Building> playerUnits = BuildingManager.ms_instance.GetBuildings();
         GameObject closestUnit = null;
-
-        foreach (GameObject go in playerUnits)
-        {
-            if (closestUnit == null)
-            {
-                closestUnit = go;
-                continue;
-            }
-
-            if (Vector3.Distance(go.transform.position, transform.position) < Vector3.Distance(closestUnit.transform.position, transform.position))
-            {
-                closestUnit = go;
-            }
-        }
-
-        if(playerUnits.Length == 0)
+        if (playerUnits.Count == 0 && GameObject.FindGameObjectsWithTag("Player").Length == 0)
         {
             BuildingManager.CheckForEndGame();
+        }else if(playerUnits.Count == 0)
+        {
+            closestUnit = GameObject.FindGameObjectsWithTag("Player")[Random.Range(0, playerUnits.Count)].gameObject;
         }
+        else
+        {
+            closestUnit = playerUnits[Random.Range(0, playerUnits.Count)].gameObject;
+        }
+
+
+
 
         return closestUnit;
     }
@@ -80,6 +77,10 @@ public class Enemy : MonoBehaviour
         Destroy(coll.gameObject);
         Destroy(this.gameObject);
 
+        m_health--;
+        if (m_health <= 0)
+        {
+        }
 
     }
 }

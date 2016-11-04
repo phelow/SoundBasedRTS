@@ -24,7 +24,7 @@ public class SpawnEnemies : MonoBehaviour {
         float spawnRate = 1.0f;
         float spawnMultiplier = 1.0f;
 
-        int numToSpawn = 1;
+        int numToSpawn = 0;
         while (true)
         {
             m_image.color = Color.Lerp(Color.grey, Color.clear, .5f);
@@ -53,7 +53,7 @@ public class SpawnEnemies : MonoBehaviour {
                 spawnTime -= spawnRate;
 
                 for (int i = 0; i < numToSpawn; i++) {
-                    GameObject.Instantiate(m_enemy, transform.position, transform.rotation, null);
+                    (GameObject.Instantiate(m_enemy, transform.position, transform.rotation, null) as GameObject).GetComponent<Enemy>().SetHealth(numToSpawn + BuildingManager.ms_instance.GetNumBuildings()/10);
                 }
 
                 yield return new WaitForSeconds(spawnRate);

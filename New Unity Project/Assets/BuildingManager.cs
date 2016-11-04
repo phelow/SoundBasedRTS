@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class BuildingManager : MonoBehaviour
 {
-    private static BuildingManager ms_instance;
+    public static BuildingManager ms_instance;
     [SerializeField]
     private List<Building> m_buildings;
     [SerializeField]
@@ -21,6 +21,8 @@ public class BuildingManager : MonoBehaviour
     private float m_maxDensity = 3.0f;
     private float m_minerRange = 5.0f;
     private float m_closeProximity = .5f;
+
+    
 
     private int m_yourScore = 0;
 
@@ -81,6 +83,11 @@ public class BuildingManager : MonoBehaviour
     {
         ms_instance.m_buildings.Remove(building);
         Destroy(building.gameObject);
+    }
+
+    public List<Building> GetBuildings()
+    {
+        return m_buildings;
     }
 
     public static Building GetBuildingForMiner(Transform minerTransform)
@@ -175,6 +182,11 @@ public class BuildingManager : MonoBehaviour
         ms_isHectic = false;
     }
 
+    public int GetNumBuildings()
+    {
+        return m_buildings.Count;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -195,7 +207,7 @@ public class BuildingManager : MonoBehaviour
             m_audioSource.volume = 1.0f;
             ms_baseDropped = false;
             //find the nearest building
-
+            Debug.Log("Setting the yields");
 
             foreach (Building building in closeBuildings)
             {
@@ -211,24 +223,25 @@ public class BuildingManager : MonoBehaviour
             {
                 return;
             }
+            for (int i = 0; i < m_buildings.Count / 5 + 1; i++) {
+                Building randomBuilding = m_buildings[Random.Range(0, m_buildings.Count)];
 
-            Building randomBuilding = m_buildings[Random.Range(0, m_buildings.Count)];
+                closeBuildings = new List<Building>();
 
-            closeBuildings = new List<Building>();
-
-            foreach (Building building in m_buildings)
-            {
-
-                if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < m_closeProximity)
+                foreach (Building building in m_buildings)
                 {
-                    closeBuildings.Add(building);
+
+                    if (Vector2.Distance(randomBuilding.transform.position, building.transform.position) < m_closeProximity)
+                    {
+                        closeBuildings.Add(building);
+                    }
                 }
-            }
 
 
-            foreach (Building building in closeBuildings)
-            {
-                building.SetYield(Random.Range(3.0f, 6.0f));
+                foreach (Building building in closeBuildings)
+                {
+                    building.SetYield(Random.Range(5.0f, 10.0f));
+                }
             }
         }
 
@@ -247,17 +260,17 @@ public class BuildingManager : MonoBehaviour
 
         if (ms_isHectic)
         {
-            wrapper.metroVal = Random.Range(200,800);
-            wrapper.metroVal2 = Random.Range(200, 800);
-            wrapper.metroVal3 = Random.Range(200, 800);
+            wrapper.metroVal = Random.Range(400,800);
+            wrapper.metroVal2 = Random.Range(400, 800);
+            wrapper.metroVal3 = Random.Range(400, 800);
         }
         else {
             wrapper.metroVal = totalMetro;
             wrapper.metroVal2 = totalMetro / 2;
             wrapper.metroVal3 = totalMetro / 4;
         }
-
-        wrapper.octaveLength = Mathf.Lerp(1, 50, Mathf.InverseLerp(.5f, 15.0f, totalYield));
+        //Debug.Log("totalYIeld:" + totalYield);
+        wrapper.octaveLength = Mathf.Lerp(0.0f, 50, Mathf.InverseLerp(.5f, 20.0f, totalYield));
 
     }
 }

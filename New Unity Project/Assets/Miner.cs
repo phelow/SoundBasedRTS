@@ -17,21 +17,13 @@ public class Miner : MonoBehaviour
     void Start()
     {
         m_targetBuilding = BuildingManager.GetBuildingForMiner(transform);
+
+        m_rigidbody.AddForce((m_targetBuilding.transform.position - transform.position).normalized * m_minerForce * Time.deltaTime);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(m_targetBuilding == null)
-        {
-            m_targetBuilding = BuildingManager.GetBuildingForMiner(transform);
-            if(m_targetBuilding == null)
-            {
-                return;
-            }
-        }
-
-        m_rigidbody.AddForce((m_targetBuilding.transform.position - transform.position).normalized * m_minerForce * Time.deltaTime);
 
     }
 

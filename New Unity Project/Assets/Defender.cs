@@ -13,27 +13,15 @@ public class Defender : MonoBehaviour {
     void Start()
     {
         //pick the nearest player unit
-        StartCoroutine(Seek());
-    }
+        GameObject target = FindTarget();
 
-    private IEnumerator Seek()
-    {
-        GameObject target = null;
-        float t = 5.0f;
-        while (t > 0.0f)
+        if(target == null)
         {
-            t -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-            if (target == null)
-            {
-                target = FindTarget();
-                continue;
-            }
-
-            m_rigidbody.AddForce((target.transform.position - transform.position).normalized * Time.deltaTime * m_enemyForce);
+            return;
         }
-        Destroy(this.gameObject);
+        m_rigidbody.AddForce((target.transform.position - transform.position).normalized * m_enemyForce);
     }
+    
 
     public GameObject FindTarget()
     {
