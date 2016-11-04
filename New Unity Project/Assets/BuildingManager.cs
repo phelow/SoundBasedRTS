@@ -47,14 +47,7 @@ public class BuildingManager : MonoBehaviour
 
         StartCoroutine(TickProduction());
     }
-
-    public static void CheckForEndGame()
-    {
-        if(ms_instance.m_buildings.Count == 0)
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        }
-    }
+    
 
     public IEnumerator TickProduction()
     {
@@ -270,7 +263,7 @@ public class BuildingManager : MonoBehaviour
             wrapper.metroVal3 = totalMetro / 4;
         }
         //Debug.Log("totalYIeld:" + totalYield);
-        wrapper.octaveLength = Mathf.Lerp(0.0f, 50, Mathf.InverseLerp(.5f, 20.0f, totalYield));
+        wrapper.octaveLength = Mathf.Lerp(0.0f, 50, Mathf.InverseLerp(.5f, 20.0f, totalYield)); //TODO: set base pitch instead of octavelength
 
     }
 }

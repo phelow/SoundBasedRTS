@@ -41,8 +41,9 @@ public class Enemy : MonoBehaviour
         GameObject closestUnit = null;
         if (playerUnits.Count == 0 && GameObject.FindGameObjectsWithTag("Player").Length == 0)
         {
-            BuildingManager.CheckForEndGame();
-        }else if(playerUnits.Count == 0)
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        }
+        else if(playerUnits.Count == 0)
         {
             closestUnit = GameObject.FindGameObjectsWithTag("Player")[Random.Range(0, playerUnits.Count)].gameObject;
         }
@@ -50,9 +51,6 @@ public class Enemy : MonoBehaviour
         {
             closestUnit = playerUnits[Random.Range(0, playerUnits.Count)].gameObject;
         }
-
-
-
 
         return closestUnit;
     }
