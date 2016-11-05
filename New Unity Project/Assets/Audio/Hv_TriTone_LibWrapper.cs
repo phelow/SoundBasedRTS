@@ -105,8 +105,6 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
   private float _waveToggle2 = 1.0f;
   private float _waveToggle3 = 1.0f;
   private Hv_TriTone_Context _context;
-    
-
 
   public void RegisterSendHook() {
     _context.RegisterSendHook();

@@ -34,7 +34,7 @@ public class SpawnEnemies : MonoBehaviour {
             while(t > 0.0f)
             {
                 t -= Time.deltaTime;
-                wrapper.octaveLength = Mathf.Lerp(20, 5, t);
+                //wrapper.octaveLength = Mathf.Lerp(20, 5, t);
                 yield return new WaitForEndOfFrame();
             }
 

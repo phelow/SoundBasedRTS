@@ -39,6 +39,10 @@ public class BuildingManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        float totalMetro = 300;
+        wrapper.metroVal = totalMetro;
+        wrapper.metroVal2 = totalMetro * 1.5f;
+        wrapper.metroVal3 = totalMetro * 2;
         ms_instance = this;
         foreach (Building building in m_buildings)
         {
@@ -248,7 +252,6 @@ public class BuildingManager : MonoBehaviour
         Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         //calculate the yield
-        float totalMetro = 500;
         m_audioSource.volume = Mathf.Lerp(.1f, 1.0f, Mathf.InverseLerp(.5f, 15.0f, totalYield));
 
         if (ms_isHectic)
@@ -258,12 +261,9 @@ public class BuildingManager : MonoBehaviour
             wrapper.metroVal3 = Random.Range(400, 800);
         }
         else {
-            wrapper.metroVal = totalMetro;
-            wrapper.metroVal2 = totalMetro / 2;
-            wrapper.metroVal3 = totalMetro / 4;
         }
         //Debug.Log("totalYIeld:" + totalYield);
-        wrapper.octaveLength = Mathf.Lerp(0.0f, 50, Mathf.InverseLerp(.5f, 20.0f, totalYield)); //TODO: set base pitch instead of octavelength
+        wrapper.freq = Mathf.Lerp(200.0f, 600.0f, Mathf.InverseLerp(.5f, 100.0f, totalYield)); //TODO: set base pitch instead of octavelength
 
     }
 }
