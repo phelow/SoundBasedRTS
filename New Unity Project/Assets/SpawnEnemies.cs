@@ -22,7 +22,7 @@ public class SpawnEnemies : MonoBehaviour {
     {
         float nightCycle = 10.0f;
         float spawnRate = 1.0f;
-        float spawnMultiplier = 1.0f;
+        float spawnMultiplier = .8f;
 
         int numToSpawn = 0;
         while (true)

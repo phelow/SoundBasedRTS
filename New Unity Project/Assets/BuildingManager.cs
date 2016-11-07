@@ -39,19 +39,95 @@ public class BuildingManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        float totalMetro = 300;
+        ms_instance = this;
+        float totalMetro = 200;
         wrapper.metroVal = totalMetro;
         wrapper.metroVal2 = totalMetro * 1.5f;
         wrapper.metroVal3 = totalMetro * 2;
-        ms_instance = this;
+
         foreach (Building building in m_buildings)
         {
             building.ResetYield();
         }
 
-        StartCoroutine(TickProduction());
+        StartCoroutine(ProduceTownHall(wrapper.metroVal));
+        StartCoroutine(ProduceMine(wrapper.metroVal2));
+        StartCoroutine(ProduceArmory(wrapper.metroVal3));
     }
-    
+
+
+    public IEnumerator ProduceTownHall(float waitInMillseconds)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitInMillseconds/100.0f);
+            List<Building> toRemove = new List<Building>();
+
+            foreach (Building building in m_buildings)
+            {
+                if (building is TownCenter && building.PassiveProduce())
+                {
+                    toRemove.Add(building);
+                }
+            }
+
+            foreach (Building building in toRemove)
+            {
+                RemoveBuilding(building);
+            }
+        }
+
+    }
+
+
+    public IEnumerator ProduceMine(float waitInMillseconds)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitInMillseconds / 100.0f);
+            List<Building> toRemove = new List<Building>();
+
+            foreach (Building building in m_buildings)
+            {
+                if (building is Mine && building.PassiveProduce())
+                {
+                    toRemove.Add(building);
+                }
+            }
+
+            foreach (Building building in toRemove)
+            {
+                RemoveBuilding(building);
+            }
+        }
+
+    }
+
+
+    public IEnumerator ProduceArmory(float waitInMillseconds)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitInMillseconds / 100.0f);
+            List<Building> toRemove = new List<Building>();
+
+            foreach (Building building in m_buildings)
+            {
+                if (building is Armory && building.PassiveProduce())
+                {
+                    toRemove.Add(building);
+                }
+            }
+
+            foreach (Building building in toRemove)
+            {
+                RemoveBuilding(building);
+            }
+        }
+
+    }
+
+
 
     public IEnumerator TickProduction()
     {
@@ -189,11 +265,29 @@ public class BuildingManager : MonoBehaviour
     {
         List<Building> closeBuildings = new List<Building>();
 
+        wrapper.waveToggle = 0;
+        wrapper.waveToggle2 = 0;
+        wrapper.waveToggle3 = 0;
+
         foreach (Building building in m_buildings)
         {
-
+            building.SetPassiveImage();
             if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.mousePosition), building.transform.position) < m_closeProximity)
             {
+                if(building is TownCenter)
+                {
+                    wrapper.waveToggle = 1;
+                } else if(building is Armory)
+                {
+
+                    wrapper.waveToggle2 = 1;
+                }
+                else if (building is Armory)
+                {
+
+                    wrapper.waveToggle3 = 1;
+                }
+                building.SetActiveImage();
                 closeBuildings.Add(building);
             }
         }
@@ -253,15 +347,7 @@ public class BuildingManager : MonoBehaviour
 
         //calculate the yield
         m_audioSource.volume = Mathf.Lerp(.1f, 1.0f, Mathf.InverseLerp(.5f, 15.0f, totalYield));
-
-        if (ms_isHectic)
-        {
-            wrapper.metroVal = Random.Range(400,800);
-            wrapper.metroVal2 = Random.Range(400, 800);
-            wrapper.metroVal3 = Random.Range(400, 800);
-        }
-        else {
-        }
+        
         //Debug.Log("totalYIeld:" + totalYield);
         wrapper.freq = Mathf.Lerp(200.0f, 600.0f, Mathf.InverseLerp(.5f, 100.0f, totalYield)); //TODO: set base pitch instead of octavelength
 

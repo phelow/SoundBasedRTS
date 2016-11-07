@@ -41,15 +41,16 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
         Hv_TriTone_LibWrapper script = GetComponent<Hv_TriTone_LibWrapper>();
 
         // Set the public parameter. Will also clamp the value, update the editor and pass it to the patch context.
-        script.freq = 0.5f;
+        script.beatLength = 0.5f;
 
         // Send a float value directly to the patch context.
-        script.SendFloatToReceiver(Hv_TriTone_LibWrapper.Parameter.Freq, 0.5f);
+        script.SendFloatToReceiver(Hv_TriTone_LibWrapper.Parameter.Beatlength, 0.5f);
 
         // Sends a bang to this parameter.
-        script.SendBangToReceiver(Hv_TriTone_LibWrapper.Parameter.Freq);
+        script.SendBangToReceiver(Hv_TriTone_LibWrapper.Parameter.Beatlength);
     }
   */
+  public float beatLength = 100.0f; // beatLength
   public float freq = 324.0f; // freq
   public float metroVal = 300.0f; // metroVal
   public float metroVal2 = 300.0f; // metroVal2
@@ -60,6 +61,7 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
   public float waveToggle3 = 1.0f; // waveToggle3
 
   public enum Parameter : uint {
+    Beatlength = 0x6EA86E55,
     Freq = 0x345FC008,
     Metroval = 0xFFED8BCB,
     Metroval2 = 0x89B63A51,
@@ -96,6 +98,7 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
   public FloatMessageReceived FloatReceivedCallback;
 
   // internal state
+  private float _beatLength = 100.0f;
   private float _freq = 324.0f;
   private float _metroVal = 300.0f;
   private float _metroVal2 = 300.0f;
@@ -140,6 +143,7 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
   }
   
   private void Start() {
+    _context.SendFloatToReceiver((uint) Parameter.Beatlength, Mathf.Clamp(beatLength, 0.0f, 10000.0f));
     _context.SendFloatToReceiver((uint) Parameter.Freq, Mathf.Clamp(freq, 0.0f, 1000.0f));
     _context.SendFloatToReceiver((uint) Parameter.Metroval, Mathf.Clamp(metroVal, 0.0f, 10000.0f));
     _context.SendFloatToReceiver((uint) Parameter.Metroval2, Mathf.Clamp(metroVal2, 0.0f, 10000.0f));
@@ -162,6 +166,10 @@ public class Hv_TriTone_LibWrapper : MonoBehaviour {
   
   private void OnValidate() {
     if (_context != null) {
+      if (_beatLength != beatLength) {
+        _beatLength = beatLength = Mathf.Clamp(beatLength, 0.0f, 10000.0f);
+        _context.SendFloatToReceiver((uint) Parameter.Beatlength, _beatLength);
+      }
       if (_freq != freq) {
         _freq = freq = Mathf.Clamp(freq, 0.0f, 1000.0f);
         _context.SendFloatToReceiver((uint) Parameter.Freq, _freq);

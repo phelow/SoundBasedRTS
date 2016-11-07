@@ -53,29 +53,35 @@ public class Building : MonoBehaviour {
             for (int i = 0; i < 5; i++)
             {
                 GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+                
             }
         }
 
         if (m_triggered)
         {
-            for (int i = 0; i < 10 * m_yield; i++)
+            for (int i = 0; i < (int)Mathf.Lerp(10,100, m_yield/10.0f); i++)
             {
-                (GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null) as GameObject).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-2,2), Random.Range(-2, 2)).normalized * m_yield);
+                (GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null) as GameObject).GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-2, 2), Random.Range(-2, 2)).normalized * m_yield);
+                
             }
             return true;
         }
-        GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+
+        if (Random.Range(0, 10) < 4)
+        {
+            GameObject.Instantiate(m_spawnObject, transform.position, transform.rotation, null);
+        }
         return false;
     }
 
-    protected void SetPassiveImage()
+    public void SetPassiveImage()
     {
         m_image.color = Color.Lerp(m_image.color, m_originalColor, .5f);
     }
 
-    protected void SetActiveImage()
+    public void SetActiveImage()
     {
-        m_image.color = Color.Lerp(m_image.color, m_selectedColor, .5f);
+        m_image.color = Color.Lerp(m_image.color, m_selectedColor, .9f);
     }
 
 
