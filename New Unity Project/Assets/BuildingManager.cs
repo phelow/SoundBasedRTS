@@ -343,7 +343,14 @@ public class BuildingManager : MonoBehaviour
             totalYield += building.GetYield();
         }
 
+
+
+
         Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        foreach (Building building in m_buildings)
+        {
+            totalYield += building.GetYield()/(1 + Vector2.Distance(building.transform.position,cursorPosition) * 3);
+        }
 
         //calculate the yield
         m_audioSource.volume = Mathf.Lerp(.1f, 1.0f, Mathf.InverseLerp(.5f, 15.0f, totalYield));
